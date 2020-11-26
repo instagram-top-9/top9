@@ -58,13 +58,14 @@
 
 </body>
 <script>
-    start_schedule();
+    
     var intervalID;
-    var delay = 5000;
+    var delay = 10000;
     var max_retry_time = 5;
     var try_count = 0;
     const urlParams = new URLSearchParams(window.location.search);
-    var username = urlParams.get('username');
+    var username = urlParams.get('u');
+    start_schedule();
     function start_schedule(delay_time) {
         intervalID = setInterval(function () {
             query_status()
@@ -89,7 +90,7 @@
                 if (resp.code === 0) {
                     keep_query=false;
                     //$("#working").hide();
-                    window.location.href = '/admin/show?username=' + username;
+                    window.location.href = '/preview.html?u=' + username;
                 } else {
                     console.log("失敗");
                     start_schedule(delay);
