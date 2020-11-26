@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+  body {
+    margin: 0px;
+    padding: 0px;
+  }
+</style>
+</head>
+<body>
+<canvas id="targetCanvas" width="600" height="600"></canvas>
+</body></html>
+<script>
+    function loadImages(sources, callback) {
+        var images = [];
+        var loadedImages = 0;
+        var numImages = 0;
+        // get num of sources
+        for (var src in sources) {
+            numImages++;
+        }
+        for (i = 0; i < sources.length; i++) {
+            images[i] = new Image();
+
+            images[i].onload = function () {
+                if (++loadedImages >= numImages) {
+                    callback(images);
+                }
+            };
+            images[i].src = sources[i];
+        }
+    }
+
+
+    var canvas = document.getElementById('targetCanvas');
+    var context = canvas.getContext('2d');
+
+
+    var sources = [
+        'https://instagram.ftpe4-1.fna.fbcdn.net/v/t51.2885-15/e35/c135.0.810.810a/s320x320/121576002_900343150494746_205971951900198485_n.jpg?_nc_ht=instagram.ftpe4-1.fna.fbcdn.net&_nc_cat=1&_nc_ohc=Z0BDJIhcZIsAX8SExAZ&tp=1&oh=a64a5479780d79d36120ba50296b7c57&oe=5FE6A358',
+         'https://instagram.ftpe4-1.fna.fbcdn.net/v/t51.2885-15/e35/c0.180.1440.1440a/s320x320/121591357_532772824347487_4124198607487062284_n.jpg?_nc_ht=instagram.ftpe4-1.fna.fbcdn.net&_nc_cat=1&_nc_ohc=6ydzBqTRpggAX-gFk83&tp=1&oh=74f5c843400e2daea713e7162ee4c3d5&oe=5FE5F791',
+        'https://instagram.ftpe4-1.fna.fbcdn.net/v/t51.2885-15/e35/c0.180.1440.1440a/s320x320/122201822_133924374740607_3785423554222840328_n.jpg?_nc_ht=instagram.ftpe4-1.fna.fbcdn.net&_nc_cat=1&_nc_ohc=cgU_zC2cHtwAX_7wkZ7&tp=1&oh=1d1bcf86241e8b9add2c3f548d5561e3&oe=5FE41604',
+        'https://instagram.ftpe4-1.fna.fbcdn.net/v/t51.2885-15/e35/c0.180.1440.1440a/s320x320/122717632_208241470663052_5411903066941748735_n.jpg?_nc_ht=instagram.ftpe4-1.fna.fbcdn.net&_nc_cat=1&_nc_ohc=58aDfwH5Ve8AX9p6JZ-&tp=1&oh=62dfbff8cdca6bb189a1f5ac459b8434&oe=5FE39D07',
+        'https://instagram.ftpe4-1.fna.fbcdn.net/v/t51.2885-15/e35/c0.180.1440.1440a/s320x320/122921379_147135963791339_6788428230753090992_n.jpg?_nc_ht=instagram.ftpe4-1.fna.fbcdn.net&_nc_cat=1&_nc_ohc=8yZzb3j5vbkAX9hv5mv&tp=1&oh=ed878c10a4d856ab0f7f8a71574334ba&oe=5FE4559F',
+        'https://instagram.ftpe4-1.fna.fbcdn.net/v/t51.2885-15/e35/p320x320/121320812_333599767740363_777652534210059767_n.jpg?_nc_ht=instagram.ftpe4-1.fna.fbcdn.net&_nc_cat=1&_nc_ohc=d9b3VR2dGQoAX-iUxsK&tp=1&oh=bbbb587bf0ee06a8632c9165ce5c2738&oe=5FBDB992',
+        'https://instagram.ftpe4-1.fna.fbcdn.net/v/t51.2885-15/e35/c68.0.1303.1303a/s320x320/121503329_193482415515401_608154217417396496_n.jpg?_nc_ht=instagram.ftpe4-1.fna.fbcdn.net&_nc_cat=1&_nc_ohc=EinBdjxNsygAX8z8JJu&tp=1&oh=419288e7067bf117adf39f8165e4c5a8&oe=5FE38900',
+        'https://instagram.ftpe4-1.fna.fbcdn.net/v/t51.2885-15/e35/c0.170.1440.1440a/s320x320/121640038_200215504951684_5056873300126346118_n.jpg?_nc_ht=instagram.ftpe4-1.fna.fbcdn.net&_nc_cat=1&_nc_ohc=uV8Blr1owJcAX8mAZnv&tp=1&oh=afe8ea166fb57b1af41f430ea8c3d5c9&oe=5FE4EEA6',
+        'https://instagram.ftpe4-1.fna.fbcdn.net/v/t51.2885-15/e35/c0.180.1440.1440a/s320x320/121591357_532772824347487_4124198607487062284_n.jpg?_nc_ht=instagram.ftpe4-1.fna.fbcdn.net&_nc_cat=1&_nc_ohc=6ydzBqTRpggAX-gFk83&tp=1&oh=74f5c843400e2daea713e7162ee4c3d5&oe=5FE5F791',
+    ];
+
+
+    function drawRectanlesBorders(img, x, y, width, height, deg) {
+
+        var c = document.getElementById("targetCanvas");
+        var ctx = c.getContext("2d");
+        var rad = deg * Math.PI / 180;
+
+        ctx.save();
+        ctx.translate(x + width / 2, y + height / 2);
+        ctx.rotate(rad);
+        ctx.beginPath();
+        ctx.rect(width / 2 * (-1), height / 2 * (-1), width, height);
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = 'white';
+        ctx.stroke();
+        ctx.restore();
+    }
+
+
+    function drawImageRot(img, x, y, width, height, deg) {
+
+        var c = document.getElementById("targetCanvas");
+        var ctx = c.getContext("2d");
+        var rad = deg * Math.PI / 180;
+
+        ctx.save();
+        ctx.translate(x + width / 2, y + height / 2);
+        ctx.rotate(rad);
+        ctx.drawImage(img, width / 2 * (-1), height / 2 * (-1), width, height);
+        ctx.restore();
+    }
+
+
+    loadImages(sources, function (images) {
+        var c = document.getElementById("targetCanvas");
+        rowSize=Math.ceil(Math.sqrt(sources.length));
+        console.log(rowSize);
+        width=Math.floor(c.height/rowSize);
+        height=width;
+        grid_width=width-10;
+        grid_height=width-10;
+        
+        for (i = 0; i < sources.length; i++) {
+            y=width*Math.floor(i/rowSize)
+            x=height*(i%rowSize)
+            drawRectanlesBorders(sources[i], x, y, grid_width, grid_height, 0);
+           
+            if(images[i].width>images[i].height){
+                img_width=grid_width;
+                img_height=Math.floor(images[i].height * (grid_width/images[i].width))
+            }else{
+                img_height=grid_width;
+                img_width=Math.floor(images[i].width * (grid_width/images[i].height))
+            }
+            console.log(images[i].height,images[i].width,img_height,img_width)
+            if(img_width<grid_width){
+                x+=(grid_width-img_width)/2;
+            }
+            if(img_height<grid_height){
+                y+=(grid_height-img_height)/2;
+            }
+            drawImageRot(images[i], x, y, img_width, img_height, 0);
+        }
+    });
+</script>
+
+</html>
