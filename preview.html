@@ -36,13 +36,26 @@
         </div>
 
     </div>
-    <canvas id="targetCanvas" width="1080" height="1720" hidden></canvas>
+    <canvas id="targetCanvas" width="1080" height="1500" hidden></canvas>
 
 </body>
 <script>
     var sources = [];
 
     $(document).ready(function () {
+        WebFontConfig = {
+            google: { families: ['Dancing Script'] },
+            active: function () { start(); },
+        };
+        (function () {
+            var wf = document.createElement("script");
+            wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1.5.10/webfont.js';
+            wf.async = 'true';
+            document.head.appendChild(wf);
+        })();
+    })
+
+    function start() {
         const urlParams = new URLSearchParams(window.location.search);
         var username = urlParams.get('u');
         $.ajax({
@@ -63,9 +76,7 @@
 
             }
         });
-
-
-    })
+    }
     function loadImages(sources, callback) {
         var images = [];
         var loadedImages = 0;
@@ -185,7 +196,11 @@
         return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
     }
     function show_preview_crop(data) {
-        for (i = 0; i < length; i++) {
+        var c = document.getElementById("targetCanvas");
+        var ctx = c.getContext("2d");
+        ctx.fillStyle = "#fafafa";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        for (i = 0; i < data.post_list.length; i++) {
             sources[i] = data.post_list[i].url;
         }
         loadImages(sources, function (images) {
@@ -196,7 +211,7 @@
             width = Math.floor(c.width / rowSize);
             height = width;
             padding = 3;
-            grid_width = width - (rowSize * padding);
+            grid_width = width - (rowSize - 1 * padding);
             grid_height = grid_width;
             x_padding = padding;
             y_padding = padding;
@@ -213,13 +228,14 @@
                 drawImageRot_crop(images[i], x, y, crop_size, grid_width);
             }
             //draw text
-            var c = document.getElementById("targetCanvas");
-            var ctx = c.getContext("2d");
+
             // draw first text
             var text = ["You receieved ", nFormatter(data.total_liked_count) + " Likes", " in 2020~ 🎊"];
             var text_length = [];
             var total_text_length = 0;
-            var normal_font = "35px Noto Sans JP";
+            var normal_font = "40px Roboto";
+            ctx.fillStyle = "#232324";
+
             var bold_font = "bold " + normal_font;
             for (i = 0; i < text.length; i++) {
                 if (i == 1) {
@@ -241,9 +257,13 @@
                 if (i != 0) {
                     start_x += text_length[i - 1];
                 }
-                ctx.fillText(text[i], start_x, width * rowSize + 60);
+                ctx.fillText(text[i], start_x, width * rowSize + 120);
             }
 
+            //foot
+            ctx.textAlign = "center";
+            ctx.font = "70px Dancing Script";
+            ctx.fillText("Best  of  2020", c.width / 2, width * rowSize + 260);
 
             ctx.restore();
             //export to img
