@@ -30,10 +30,14 @@
                 </div>
             </nav>
         </div>
-        <div class="uk-card-body">
-            <canvas class="uk-align-center" id="targetCanvas" width="540" height="860"></canvas>
+
+        <div class="uk-container uk-container-small uk-width-large">
+            <img class="" id="preview" name="preview" uk-img />
         </div>
+
     </div>
+    <canvas id="targetCanvas" width="1080" height="1720" hidden></canvas>
+
 </body>
 <script>
     var sources = [];
@@ -55,11 +59,8 @@
                     return;
                 }
 
-                for (i = 0; i < length; i++) {
-                    sources[i] = resp.data.post_list[i].url;
+                show_preview_crop(resp.data);
 
-                }
-                show_preview_crop();
             }
         });
 
@@ -75,7 +76,7 @@
         }
         for (i = 0; i < sources.length; i++) {
             images[i] = new Image();
-
+            images[i].setAttribute("crossOrigin", 'Anonymous');
             images[i].onload = function () {
                 if (++loadedImages >= numImages) {
                     callback(images);
@@ -123,7 +124,7 @@
 
             rowSize = Math.ceil(Math.sqrt(sources.length));
             console.log(rowSize);
-            width = Math.floor(540 / rowSize);
+            width = Math.floor(c.width / rowSize);
             height = width;
             padding = 3;
             grid_width = width - (rowSize * padding);
@@ -164,13 +165,35 @@
         ctx.restore();
     }
 
-    function show_preview_crop() {
+    function nFormatter(num, digits) {
+        var si = [
+            { value: 1, symbol: "" },
+            { value: 1E3, symbol: "k" },
+            { value: 1E6, symbol: "M" },
+            { value: 1E9, symbol: "G" },
+            { value: 1E12, symbol: "T" },
+            { value: 1E15, symbol: "P" },
+            { value: 1E18, symbol: "E" }
+        ];
+        var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+        var i;
+        for (i = si.length - 1; i > 0; i--) {
+            if (num >= si[i].value) {
+                break;
+            }
+        }
+        return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
+    }
+    function show_preview_crop(data) {
+        for (i = 0; i < length; i++) {
+            sources[i] = data.post_list[i].url;
+        }
         loadImages(sources, function (images) {
             var c = document.getElementById("targetCanvas");
 
             rowSize = Math.ceil(Math.sqrt(sources.length));
             console.log(rowSize);
-            width = Math.floor(540 / rowSize);
+            width = Math.floor(c.width / rowSize);
             height = width;
             padding = 3;
             grid_width = width - (rowSize * padding);
@@ -188,10 +211,47 @@
                     crop_size = images[i].height;
                 }
                 drawImageRot_crop(images[i], x, y, crop_size, grid_width);
-
-
             }
+            //draw text
+            var c = document.getElementById("targetCanvas");
+            var ctx = c.getContext("2d");
+            // draw first text
+            var text = ["You receieved ", nFormatter(data.total_liked_count) + " Likes", " in 2020~ 🎊"];
+            var text_length = [];
+            var total_text_length = 0;
+            var normal_font = "35px Noto Sans JP";
+            var bold_font = "bold " + normal_font;
+            for (i = 0; i < text.length; i++) {
+                if (i == 1) {
+                    ctx.font = bold_font;
+                } else {
+                    ctx.font = normal_font;
+                }
+                text_length[i] = ctx.measureText(text[i]).width;
+                total_text_length += text_length[i];
+            }
+            console.log();
+            var start_x = (c.width - total_text_length) / 2;
+            for (i = 0; i < text.length; i++) {
+                if (i == 1) {
+                    ctx.font = bold_font;
+                } else {
+                    ctx.font = normal_font;
+                }
+                if (i != 0) {
+                    start_x += text_length[i - 1];
+                }
+                ctx.fillText(text[i], start_x, width * rowSize + 60);
+            }
+
+
+            ctx.restore();
+            //export to img
+            var img = c.toDataURL("image/png");
+            $("#preview").attr("src", img);
         });
+
+
     }
 
 </script>
